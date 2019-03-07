@@ -1,2 +1,2 @@
 # creative-gan-wikiart
-creating the next Picasso via a Creative Adversarial Network. 
+Creating the next Picasso via a Creative Adversarial Network. 
