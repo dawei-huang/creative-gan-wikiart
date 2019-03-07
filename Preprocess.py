@@ -11,19 +11,17 @@ from glob import glob
 import numpy as np
 #import matplotlib.pyplot as plt
 
-IMGHEIGHT = 227
-IMGWIDTH = 227
+IMGHEIGHT = 32
+IMGWIDTH = 32
 CHANNELS = 3
 
 def Preprocess(wdir):
     images, labels = LoadDataTest(wdir)
-    imgs = np.zeros((len(images), IMGHEIGHT, IMGWIDTH, CHANNELS))
-    for i in range(len(images)):
-        images[i] = cv2.resize(images[i],(IMGHEIGHT, IMGWIDTH), interpolation = cv2.INTER_AREA)
-        imgs[i, :, :, :] = images[i]
-    return imgs, labels        
+    #Do Preprocessing here
+    return images, labels        
     
 def GenTestSet(images, labels):
+    #Split data into Training and Testing Set with 80/20 split
     p = int(0.2 * images.shape[0])
     idx = np.random.permutation(images.shape[0])
     train_idx, test_idx = idx[p:], idx[:p]
@@ -37,22 +35,26 @@ def LoadData(wdir):
     return images, labels
 
 def LoadDataTest(wdir):
-    images = []
-    labels = []
+    #Count number of files and Preallocate Arrays
+    num = sum([len(files) for r, d, files in os.walk(wdir)])
+    images = np.empty((num, IMGHEIGHT, IMGWIDTH, CHANNELS))
+    labels = np.empty((num, 27))
+    #Iterate through all images
     class_num = -1
+    counter = -1
     for directory in os.walk(wdir):
-        counter = 0
+        num_img = 0
         for img in glob(os.path.join(directory[0], '*.jpg')):
-            images.append(cv2.imread(img))
+            #Resize before adding to array
+            images[counter, :, :, :] = cv2.resize(cv2.imread(img),(IMGHEIGHT, IMGWIDTH), interpolation=cv2.INTER_AREA)
             one_hot = np.zeros(27)
             one_hot[class_num] = 1
-            labels.append(one_hot)
+            labels[counter, :] = one_hot
             counter += 1
-            if counter == 50: #number of images from each class
+            num_img += 1
+            if num_img == 10:
                 break
         class_num += 1
-    images = np.asarray(images)
-    labels = np.asarray(labels)
     return images, labels
 
 
