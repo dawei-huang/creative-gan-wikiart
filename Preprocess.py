@@ -48,7 +48,7 @@ def LoadDataTest(wdir):
             one_hot[class_num] = 1
             labels.append(one_hot)
             counter += 1
-            if counter == 50:
+            if counter == 50: #number of images from each class
                 break
         class_num += 1
     images = np.asarray(images)
